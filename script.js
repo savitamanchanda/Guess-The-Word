@@ -14,12 +14,37 @@ var blankLetters = [];
 var isWin = false;
 var winCounter = 0;
 var loseCounter = 0;
+var timeLeft = 0;
 
+function init() {
+    getWins();
+    getlosses();
+  }
 
+function startGame() { 
+    isWin = false;
+    startButton.disabled = true;
+    renderBlanks();
+    startTimer();
+}
+
+function winGame() {
+    wordBlank.textContent = "Congratulation! You won!"
+    winCounter++
+    startButton.disabled = false;
+    setWins();
+}
+
+function loseGame() {
+    wordBlank.textContent = "Sorry! You lost!"
+    loseCounter++
+    startButton.disabled = false;
+    setLoses();
+}
 
 function startTimer(){
 
-    var timeLeft = 10;
+    timeLeft = 11;
 
     var timeInterval = setInterval(function () {
       timeLeft--;
@@ -38,19 +63,18 @@ function startTimer(){
       }
   
     }, 1000);
-    
-};
-
-function winGame() {
-    wordBlank.textContent = "Congratulation! You won!"
-    winCounter++
-    setWins();
 }
 
-function loseGame() {
-    wordBlank.textContent = "Sorry! You lost!"
-    loseCounter++
-    setLoses();
+function renderBlanks() {
+    chosenWord = words[Math.floor(Math.random() * words.length)];
+    letters = chosenWord.split("");
+    numLetters = letters.length;
+    blankLetters = [];
+
+    for (var i = 0; i < numLetters; i++) {
+        blankLetters.push("_");
+    }
+    wordBlank.textContent = blankLetters.join(" ")
 }
 
 function setWins() {
@@ -85,23 +109,10 @@ function getLoses() {
     lose.textContent = loseCounter;
 }
 
-function startGame() { 
-isWin = false;
-renderBlanks();
-startTimer();
-}
-
-
-function renderBlanks() {
-    chosenWord = words[Math.floor(Math.random() * words.length)];
-    letters = chosenWord.split("");
-    numLetters = letters.length;
-    blankLetters = [];
-
-    for (var i = 0; i < numLetters; i++) {
-        blankLetters.push("_");
+function checkWin (){ 
+    if (chosenWord === blankLetters.join("")){
+        isWin = true;
     }
-    wordBlank.textContent = blankLetters.join(" ")
 }
 
 function checkLetters(letter) {
@@ -109,29 +120,35 @@ function checkLetters(letter) {
     for (var i =0; i < numLetters; i++) {
         if (chosenWord[i] === letter) {
             letterInWord = true;
-            blankLetters[i] = letter
         }
     }
-    wordBlank.textContent = blankLetters.join(" ")
+
+    if (letterInWord) {
+        for (var j = 0; j < numLetters; j++) {
+            if (chosenWord[j] === letter){
+                blankLetters[j] = letter;
+            }
+        }
+        wordBlank.textContent = blankLetters.join(" ");
+    }
 }
-document.addEventListener("keydown", function(event){
+
+document.addEventListener("keydown", function(event) {
+    if (timeLeft === 0) {
+        return;
+      }
+
     var key = event.key.toLowerCase();
-    var characters = "abcdefghijklmnopqrstuvwxyz".split("");
+    var characters = "abcdefghijklmnopqrstuvwxyz0123456789 ".split("");
 
     if (characters.includes(key)) {
         var guessedWord = event.key;
         checkLetters(guessedWord);
         checkWin();
     }
-})
-
-function checkWin (){ 
-    if (chosenWord === blankLetters.join("")){
-        isWin = true;
-    }
-}
+});
  
-startButton.addEventListener("click", startGame());     
+startButton.addEventListener("click", startGame);     
 
 function resetGame() {
     winCounter = 0;
@@ -141,4 +158,4 @@ function resetGame() {
     setLoses()
 }
 
-resetButton.addEventListener("click", resetGame());
+resetButton.addEventListener("click", resetGame);
