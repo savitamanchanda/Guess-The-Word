@@ -44,7 +44,7 @@ function loseGame() {
 
 function startTimer(){
 
-    timeLeft = 11;
+    timeLeft = 31;
 
     var timeInterval = setInterval(function () {
       timeLeft--;
